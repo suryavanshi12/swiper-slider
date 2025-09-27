@@ -1,296 +1,411 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Property Slider</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Property Deals Slider</title>
 
-  <!-- Swiper CSS -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f9f9f9;
-      padding: 40px;
-    }
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 
-    .section-header {
-      text-align: center;
-      margin-bottom: 30px;
-    }
+    <style>
+        :root {
+            --primary-color: #e67e22; /* Orange color for price and buttons */
+            --secondary-color: #007bff; /* Blue for 'Purchase' badge */
+            --text-dark: #333;
+            --text-light: #666;
+            --border-color: #eee;
+            --card-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
 
-    .section-header h2 {
-      font-size: 32px;
-      font-weight: bold;
-    }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 40px;
+        }
 
-    .section-header p {
-      color: #666;
-    }
+        .section-container {
+            width: 100%;
+            max-width: 1200px;
+        }
 
-    .slider-container {
-      position: relative;
-      max-width: 1200px;
-      margin: auto;
-    }
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .section-header .title-part h2 {
+            font-size: 28px;
+            color: var(--text-dark);
+            margin: 0;
+        }
 
-    /* Custom navigation buttons */
-    .slider-nav {
-      position: absolute;
-      top: -60px;
-      right: 0;
-      display: flex;
-      gap: 10px;
-    }
+        .section-header .title-part p {
+            color: var(--text-light);
+            margin: 5px 0 0;
+        }
+        
+        .slider-nav {
+            display: flex;
+            gap: 10px;
+        }
 
-    .slider-nav button {
-      width: 35px;
-      height: 35px;
-      border: none;
-      background: #fff;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-      border-radius: 6px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 18px;
-      color: #333;
-    }
+        .slider-nav button {
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--border-color);
+            background-color: #fff;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.2s ease;
+        }
 
-    /* Property card */
-    .property-card {
-      background: #fff;
-      border-radius: 10px;
-      overflow: hidden;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    }
+        .slider-nav button:hover {
+            border-color: var(--primary-color);
+            background-color: #fdf5ee;
+        }
+        
+        .slider-nav button i {
+            font-size: 22px;
+            color: var(--primary-color);
+        }
+        
+        .slider-nav .swiper-button-disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            border-color: var(--border-color);
+            background-color: #fff;
+        }
 
-    .property-image {
-      position: relative;
-      height: 200px;
-      overflow: hidden;
-    }
+        /* Property Card Styling */
+        .property-card {
+            background-color: #fff;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .property-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
 
-    .property-image img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
+        /* Image Section */
+        .property-image {
+            position: relative;
+            height: 220px;
+        }
+        .property-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .property-image .badges {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            display: flex;
+            gap: 8px;
+        }
+        .property-image .badge {
+            color: #fff;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        .badge.featured { background-color: rgba(0,0,0,0.6); }
+        .badge.purchase { background-color: var(--secondary-color); }
+        
+        .image-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 12px;
+            background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+            color: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+        }
+        .image-overlay div { display: flex; align-items: center; gap: 6px; }
+        .image-overlay i { font-size: 16px; }
 
-    .badge {
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      background: orange;
-      color: #fff;
-      padding: 4px 10px;
-      border-radius: 4px;
-      font-size: 12px;
-    }
+        /* Content Section */
+        .property-content {
+            padding: 15px;
+        }
+        .property-content h3 {
+            font-size: 18px;
+            margin: 0 0 8px 0;
+            color: var(--text-dark);
+            font-weight: 600;
+        }
+        .property-price {
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+        .property-desc {
+            font-size: 14px;
+            color: var(--text-light);
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+        .property-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .meta-details { display: flex; gap: 15px; color: var(--text-light); }
+        .meta-details span { display: flex; align-items: center; gap: 5px; font-size: 14px; }
+        .meta-details i { font-size: 18px; }
 
-    .badge.purchase {
-      right: 10px;
-      left: auto;
-      background: #007bff;
-    }
+        .details-btn {
+            background-color: var(--primary-color);
+            color: #fff;
+            padding: 6px 14px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+        }
 
-    .property-content {
-      padding: 15px;
-    }
+        /* Footer Section */
+        .property-footer {
+            padding: 12px 15px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .author { display: flex; align-items: center; gap: 8px; }
+        .author img { width: 30px; height: 30px; border-radius: 50%; }
+        .author span { font-size: 14px; color: var(--text-dark); }
 
-    .property-content h3 {
-      font-size: 18px;
-      font-weight: bold;
-      margin-bottom: 5px;
-    }
-
-    .property-price {
-      color: #e67e22;
-      font-size: 20px;
-      font-weight: bold;
-      margin-bottom: 8px;
-    }
-
-    .property-desc {
-      font-size: 14px;
-      color: #555;
-      margin-bottom: 10px;
-    }
-
-    .property-meta {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .property-meta .details-btn {
-      background: orange;
-      color: #fff;
-      padding: 4px 10px;
-      border-radius: 4px;
-      text-decoration: none;
-      font-size: 14px;
-    }
-
-    .author {
-      margin-top: 10px;
-      font-size: 14px;
-      color: #444;
-      font-weight: bold;
-    }
-
-    .swiper-button-prev::after,
-    .swiper-button-next::after {
-      font-family: swiper-icons;
-      font-size: 20px;
-      font-weight: bold;
-      color: #000;
-    }
-
-    /* Prev Button */
-    .swiper-button-prev::after {
-      content: '';
-      font-size: 20px;
-      color: #000;
-    }
-
-    /* Next Button */
-    .swiper-button-next::after {
-      content: '';
-      font-size: 20px;
-      color: #000;
-    }
-  </style>
+        .actions i {
+            font-size: 20px;
+            color: #aaa;
+            margin-left: 15px;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .actions i:hover {
+            color: var(--primary-color);
+        }
+    </style>
 </head>
-
 <body>
 
-  <!-- Section Header -->
-  <div class="section-header">
-    <h2>OUR BEST DEALS</h2>
-    <p>Check out some of the latest and best properties published on our website.</p>
-  </div>
-
-  <!-- Slider -->
-  <div class="slider-container">
-
-    <!-- Custom Arrows -->
-    <div class="slider-nav">
-      <button class="swiper-button-prev">←</button>
-      <button class="swiper-button-next">→</button>
+<div class="section-container">
+    <div class="section-header">
+        <div class="title-part">
+            <h2>OUR BEST DEALS</h2>
+            <p>Check out some of the latest and best properties published on our website.</p>
+        </div>
+        <div class="slider-nav">
+            <button class="swiper-button-prev"><i class='bx bx-left-arrow-alt'></i></button>
+            <button class="swiper-button-next"><i class='bx bx-right-arrow-alt'></i></button>
+        </div>
     </div>
 
     <div class="swiper mySwiper">
-      <div class="swiper-wrapper">
+        <div class="swiper-wrapper">
 
-        <!-- Card 1 -->
-        <div class="swiper-slide">
-          <div class="property-card">
-            <div class="property-image">
-              <img src="https://images.pexels.com/photos/259962/pexels-photo-259962.jpeg" alt="Property">
-              <span class="badge">Featured</span>
-              <span class="badge purchase">Purchase</span>
+            <div class="swiper-slide">
+                <div class="property-card">
+                    <div class="property-image">
+                        <img src="https://images.pexels.com/photos/1396122/pexels-photo-1396122.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Property">
+                        <div class="badges">
+                            <span class="badge featured">Featured</span>
+                            <span class="badge purchase">Purchase</span>
+                        </div>
+                        <div class="image-overlay">
+                            <div><i class='bx bx-map'></i><span>Near Safdarjung Metro</span></div>
+                            <div><i class='bx bx-camera'></i><span>2</span></div>
+                        </div>
+                    </div>
+                    <div class="property-content">
+                        <h3>Independent House/Villa for Sale</h3>
+                        <div class="property-price">₹ 32,00,00,000</div>
+                        <p class="property-desc">Well Renovated Kothi, wide Road, nice And Peacefully Location.</p>
+                        <div class="property-meta">
+                            <div class="meta-details">
+                                <span><i class='bx bx-bed'></i>5</span>
+                                <span><i class='bx bx-bath'></i>5</span>
+                            </div>
+                            <a href="#" class="details-btn">Details</a>
+                        </div>
+                    </div>
+                    <div class="property-footer">
+                        <div class="author">
+                            <img src="https://i.pravatar.cc/30?u=a" alt="Author">
+                            <span>Anirudh Sharma</span>
+                        </div>
+                        <div class="actions">
+                            <i class='bx bx-share-alt'></i>
+                            <i class='bx bx-heart'></i>
+                            <i class='bx bx-plus-circle'></i>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="property-content">
-              <h3>Independent House/Villa in Greater Noida</h3>
-              <div class="property-price">₹ 32,00,00,000</div>
-              <p class="property-desc">Well Renovated Kothi, wide Road, nice And Peacefully Location.</p>
-              <div class="property-meta">
-                <span>🛏 5 | 🛁 4</span>
-                <a href="#" class="details-btn">Details</a>
-              </div>
-              <div class="author">Anirudh Sharma</div>
+
+            <div class="swiper-slide">
+                <div class="property-card">
+                    <div class="property-image">
+                        <img src="https://images.pexels.com/photos/210617/pexels-photo-210617.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Property">
+                        <div class="badges">
+                             <span class="badge purchase">Purchase</span>
+                        </div>
+                        <div class="image-overlay">
+                            <div><i class='bx bx-map'></i><span>South Delhi</span></div>
+                            <div><i class='bx bx-camera'></i><span>2</span></div>
+                        </div>
+                    </div>
+                    <div class="property-content">
+                        <h3>Builder Floor Greater Kailash-2</h3>
+                        <div class="property-price">₹ 22,00,00,000</div>
+                        <p class="property-desc">Newly designed Second Floor, with brand new interior.</p>
+                        <div class="property-meta">
+                            <div class="meta-details">
+                                <span><i class='bx bx-bed'></i>5</span>
+                                <span><i class='bx bx-bath'></i>5</span>
+                            </div>
+                            <a href="#" class="details-btn">Details</a>
+                        </div>
+                    </div>
+                    <div class="property-footer">
+                        <div class="author">
+                            <img src="https://i.pravatar.cc/30?u=b" alt="Author">
+                            <span>Anirudh Sharma</span>
+                        </div>
+                        <div class="actions">
+                            <i class='bx bx-share-alt'></i>
+                            <i class='bx bx-heart'></i>
+                            <i class='bx bx-plus-circle'></i>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
+
+            <div class="swiper-slide">
+                <div class="property-card">
+                    <div class="property-image">
+                        <img src="https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Property">
+                        <div class="badges">
+                            <span class="badge featured">Featured</span>
+                            <span class="badge purchase">Purchase</span>
+                        </div>
+                        <div class="image-overlay">
+                            <div><i class='bx bx-map'></i><span>Greater Kailash-1</span></div>
+                            <div><i class='bx bx-camera'></i><span>1</span></div>
+                        </div>
+                    </div>
+                    <div class="property-content">
+                        <h3>Builder Floor Greater Kailash-1</h3>
+                        <div class="property-price">₹ 16,00,00,000</div>
+                        <p class="property-desc">Newly designed First Floor, with brand new interior.</p>
+                        <div class="property-meta">
+                            <div class="meta-details">
+                                <span><i class='bx bx-bed'></i>5</span>
+                                <span><i class='bx bx-bath'></i>5</span>
+                            </div>
+                            <a href="#" class="details-btn">Details</a>
+                        </div>
+                    </div>
+                    <div class="property-footer">
+                        <div class="author">
+                            <img src="https://i.pravatar.cc/30?u=c" alt="Author">
+                            <span>Anirudh Sharma</span>
+                        </div>
+                        <div class="actions">
+                            <i class='bx bx-share-alt'></i>
+                            <i class='bx bx-heart'></i>
+                            <i class='bx bx-plus-circle'></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="swiper-slide">
+                 <div class="property-card">
+                    <div class="property-image">
+                        <img src="https://images.pexels.com/photos/323780/pexels-photo-323780.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Property">
+                        <div class="badges">
+                             <span class="badge purchase">Purchase</span>
+                        </div>
+                        <div class="image-overlay">
+                            <div><i class='bx bx-map'></i><span>Gurugram, Haryana</span></div>
+                            <div><i class='bx bx-camera'></i><span>4</span></div>
+                        </div>
+                    </div>
+                    <div class="property-content">
+                        <h3>Modern Apartment in Sector 54</h3>
+                        <div class="property-price">₹ 4,50,00,000</div>
+                        <p class="property-desc">Spacious 3BHK with a golf course view and modern amenities.</p>
+                        <div class="property-meta">
+                            <div class="meta-details">
+                                <span><i class='bx bx-bed'></i>3</span>
+                                <span><i class='bx bx-bath'></i>3</span>
+                            </div>
+                            <a href="#" class="details-btn">Details</a>
+                        </div>
+                    </div>
+                    <div class="property-footer">
+                        <div class="author">
+                            <img src="https://i.pravatar.cc/30?u=d" alt="Author">
+                            <span>Riya Singh</span>
+                        </div>
+                        <div class="actions">
+                            <i class='bx bx-share-alt'></i>
+                            <i class='bx bx-heart'></i>
+                            <i class='bx bx-plus-circle'></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
-
-        <!-- Card 2 -->
-        <div class="swiper-slide">
-          <div class="property-card">
-            <div class="property-image">
-              <img src="https://images.pexels.com/photos/2102587/pexels-photo-2102587.jpeg" alt="Property">
-              <span class="badge">Featured</span>
-              <span class="badge purchase">Purchase</span>
-            </div>
-            <div class="property-content">
-              <h3>Builder Floor Greater Kailash-2</h3>
-              <div class="property-price">₹ 22,00,00,000</div>
-              <p class="property-desc">Newly designed Second Floor, luxurious builder floor available.</p>
-              <div class="property-meta">
-                <span>🛏 4 | 🛁 3</span>
-                <a href="#" class="details-btn">Details</a>
-              </div>
-              <div class="author">Anirudh Sharma</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Card 3 -->
-        <div class="swiper-slide">
-          <div class="property-card">
-            <div class="property-image">
-              <img src="https://images.pexels.com/photos/259588/pexels-photo-259588.jpeg" alt="Property">
-              <span class="badge">Featured</span>
-              <span class="badge purchase">Purchase</span>
-            </div>
-            <div class="property-content">
-              <h3>Builder Floor Greater Kailash-1</h3>
-              <div class="property-price">₹ 16,00,00,000</div>
-              <p class="property-desc">Newly designed First Floor with brand new interior.</p>
-              <div class="property-meta">
-                <span>🛏 3 | 🛁 2</span>
-                <a href="#" class="details-btn">Details</a>
-              </div>
-              <div class="author">Anirudh Sharma</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- -- Card 4 -- -->
-        <div class="swiper-slide">
-          <div class="property-card">
-            <div class="property-image">
-              <img src="https://images.pexels.com/photos/259588/pexels-photo-259588.jpeg" alt="Property">
-              <span class="badge">Featured</span>
-              <span class="badge purchase">Purchase</span>
-            </div>
-            <div class="property-content">
-              <h3>Builder Floor Greater Kailash-1</h3>
-              <div class="property-price">₹ 16,00,00,000</div>
-              <p class="property-desc">Newly designed First Floor with brand new interior.</p>
-              <div class="property-meta">
-                <span>🛏 3 | 🛁 2</span>
-                <a href="#" class="details-btn">Details</a>
-              </div>
-              <div class="author">Anirudh Sharma</div>
-            </div>
-          </div>
-        </div>
-
-      </div>
     </div>
-  </div>
+</div>
 
-  <!-- Swiper JS -->
-  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-  <script>
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+<script>
     var swiper = new Swiper(".mySwiper", {
-      slidesPerView: 1,
-      spaceBetween: 20,
-      navigation: {
-        prevEl: ".swiper-button-prev",
-        nextEl: ".swiper-button-next",
-      },
-      breakpoints: {
-        768: { slidesPerView: 2 },
-        1024: { slidesPerView: 3 }
-      }
+        slidesPerView: 1,
+        spaceBetween: 25,
+        navigation: {
+            nextEl: ".swiper-button-next",
+            prevEl: ".swiper-button-prev",
+        },
+        breakpoints: {
+            // when window width is >= 768px
+            768: {
+                slidesPerView: 2,
+            },
+            // when window width is >= 1024px
+            1024: {
+                slidesPerView: 3,
+            }
+        }
     });
-  </script>
+</script>
 
 </body>
-
 </html>
